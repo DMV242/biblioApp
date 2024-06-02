@@ -1,4 +1,4 @@
-import { UserType } from "../Interfaces/user";
+import { UserType } from "../models/user";
 import { User } from "../models/user";
 import { verifyPassword } from "../utils/auth";
 import { hashPassword } from "../utils/auth";

@@ -1,6 +1,9 @@
-import { UserType,UserInterface } from "../Interfaces/user";
+enum UserType {
+    USER = 'user',
+    ADMIN = 'admin',
+}
 
-class User implements UserInterface {
+class User  {
     username: string;
     password: string;
     email: string;
@@ -14,4 +17,4 @@ class User implements UserInterface {
     }
 }
 
-export {User}
+export {User,UserType}

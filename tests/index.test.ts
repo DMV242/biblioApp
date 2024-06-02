@@ -1,5 +1,5 @@
 import {login, signUp,users} from "../src/services/auth";
-import {UserType}  from "../src/Interfaces/user";
+import {UserType}  from "../src/models/user";
 
 
 describe('Test authentification flow', () => {
