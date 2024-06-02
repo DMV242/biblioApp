@@ -2,7 +2,7 @@ import { UserType } from "../Interfaces/user";
 import { User } from "../models/user";
 import { verifyPassword } from "../utils/auth";
 import { hashPassword } from "../utils/auth";
-
+import validator from "validator";
 const users: User[]  = [];
 /**
  * This function manages user login in the system.
@@ -46,6 +46,7 @@ async function signUp(username: string, password: string, email: string, type: U
         if (!username || !password || !email) {
             throw new Error("Username, password, and email are required parameters.");
         }
+        if (!validator.isEmail(email)) throw new Error("Email is not correctly formatted");
         const user = users.find((user) => {
             return user.username === username;
         });
