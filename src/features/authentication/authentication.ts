@@ -29,7 +29,7 @@ class Authentication {
             if (!username) throw new UserNameRequiredError();
             if(!password) throw new PasswordRequiredError();
             const user = await this.userRepository.getUser(username);
-            if (!user) throw new Error("Invalid credentials");
+            if (!user) throw new InvalidCredentialsError();
             const isCorrectPassword = await this.bcrypt.verifyPassword(password, user.password);
             if (!isCorrectPassword) throw new InvalidCredentialsError();
             return "Account:welcomed_to_your_account";
