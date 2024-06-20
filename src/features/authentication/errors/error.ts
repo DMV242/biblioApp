@@ -21,3 +21,9 @@ export class InvalidCredentialsError extends Error{
         super("credentials:Invalid_credentials");
     }
 }
+
+export class UserAlreadyExistsError extends Error{
+    constructor(){
+        super("Username:already_taken");
+    }
+}

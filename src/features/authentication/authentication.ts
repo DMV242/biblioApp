@@ -5,7 +5,7 @@ import { SignUpRequest } from "./request/signUpDto";
 import { UserRepository } from "./repository/userRepository";
 import { UserDatabase } from "../../database/UserDatabase";
 import { Bcrypt } from "../cypher/brypct";
-import { EmailRequiredError, InvalidCredentialsError, PasswordRequiredError, UserNameRequiredError } from "./errors/error";
+import { EmailRequiredError, InvalidCredentialsError, PasswordRequiredError, UserAlreadyExistsError, UserNameRequiredError } from "./errors/error";
 
 class Authentication {
     private userRepository: UserRepository;
@@ -50,10 +50,10 @@ class Authentication {
         try {
             if (!username) throw new UserNameRequiredError();
             if(!password) throw new PasswordRequiredError();
-            if(!email) throw new EmailRequiredError()
+            if(!email) throw new EmailRequiredError();
             if (!validator.isEmail(email)) throw new Error("Email:not_correctly_formatted");
             const user = await this.userRepository.getUser(username);
-            if (user) throw new Error("Username:already_taken");
+            if (user) throw new UserAlreadyExistsError();
             const passwordHash = await this.bcrypt.hashPassword(password);
             const newUser = User.create(username, passwordHash, email, type);
             await this.userRepository.createUser(newUser);
