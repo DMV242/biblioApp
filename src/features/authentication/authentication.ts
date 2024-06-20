@@ -1,12 +1,10 @@
 import { User } from "./models/user";
-import { verifyPassword } from "../../utils/auth";
-import { hashPassword } from "../../utils/auth";
 import validator from "validator";
 import { LoginUserRequest } from "./request/loginUserDto";
 import { SignUpRequest } from "./request/signUpDto";
 import { UserRepository } from "./repository/userRepository";
 import { UserDatabase } from "../../database/UserDatabase";
-
+import { Bcrypt } from "../cypher/brypct";
 
 
 /**
@@ -18,24 +16,16 @@ import { UserDatabase } from "../../database/UserDatabase";
  * @throws An error if the username or password is not provided, or if the credentials are invalid.
  */
 async function login(request:LoginUserRequest): Promise<string> {
-
     const {username,password} = request;
-
     try {
         if (!username || password) {
             throw new Error("Username and password are required parameters.");
         }
-        // const user = users.find((user) => {
-        //     return user.username === username;
-        // });
-
-       const user = await new UserRepository(new UserDatabase()).getUser(username);
-
+       const user = await new UserRepository(UserDatabase.getInstance()).getUser(username);
         if (!user) throw new Error("Invalid credentials");
-        const isCorrectPassword = await verifyPassword(password, user.password);
-
+        const isCorrectPassword = await Bcrypt.getInstance().verifyPassword(password, user.password);
         if (!isCorrectPassword) throw new Error("Invalid credentials");
-        return "Welcome to your account " + user.username;
+        return "Account:welcomed_to_your_account";
     } catch (error) {
         throw error;
     }
@@ -54,24 +44,19 @@ async function login(request:LoginUserRequest): Promise<string> {
 async function signUp(request:SignUpRequest): Promise<string> {
     const {username,password,email,type} = request;
     try {
-
         if (!username || !password || !email) {
             throw new Error("Username, password, and email are required parameters.");
         }
         if (!validator.isEmail(email)) throw new Error("Email is not correctly formatted");
-        const user = await new UserRepository(new UserDatabase()).getUser(username);
+        const user = await new UserRepository(UserDatabase.getInstance()).getUser(username);
         if (user) throw new Error("Username already taken");
-        const passwordHash = await hashPassword(password);
+        const passwordHash = await Bcrypt.getInstance().hashPassword(password);
         const newUser = User.create(username, passwordHash, email, type);
-        await new UserRepository(new UserDatabase()).createUser(newUser);
-
-        return "Account created successfully for " + newUser.username;
+        await new UserRepository(UserDatabase.getInstance()).createUser(newUser);
+        return "Account:created_successfully";
     } catch (error) {
         throw error;
     }
 }
-
-
-
 
 export {login,signUp};
