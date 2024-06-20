@@ -1,8 +1,8 @@
 import { UserDatabase } from "../../src/database/UserDatabase";
 import {Authentication} from "../../src/features/authentication/authentication";
 import {UserType} from "../../src/features/authentication/enum/userType";
-import { LoginUserRequest } from "../../src/features/authentication/request/loginUserDto";
-import { SignUpRequest } from "../../src/features/authentication/request/signUpDto";
+import { LoginUserRequest } from "../../src/features/authentication/request/loginUserRequest";
+import { SignUpRequest } from "../../src/features/authentication/request/signUpRequest";
 
 
 const authentication = new Authentication();

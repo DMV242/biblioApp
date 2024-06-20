@@ -1,5 +1,5 @@
 
-import { LoginUserRequestInterface } from "../request/interfaces/loginUserDto";
+import { LoginUserRequestInterface } from "./interfaces/loginUserRequest";
 
 class LoginUserRequest implements LoginUserRequestInterface{
     username: string;

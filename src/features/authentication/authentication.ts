@@ -1,7 +1,7 @@
 import { User } from "./models/user";
 import validator from "validator";
-import { LoginUserRequest } from "./request/loginUserDto";
-import { SignUpRequest } from "./request/signUpDto";
+import { LoginUserRequest } from "./request/loginUserRequest";
+import { SignUpRequest } from "./request/signUpRequest";
 import { UserRepository } from "./repository/userRepository";
 import { UserDatabase } from "../../database/UserDatabase";
 import { Bcrypt } from "../cypher/brypct";

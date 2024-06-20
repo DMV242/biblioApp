@@ -1,6 +1,6 @@
 import { UserType } from "../enum/userType";
 import { User } from "../models/user";
-import { SignUpRequestInterface } from "../request/interfaces/signUpDto";
+import { SignUpRequestInterface } from "./interfaces/signUpRequest";
 
 class SignUpRequest implements SignUpRequestInterface {
     username: string;
