@@ -1,9 +1,14 @@
-import { UserType } from "../models/user";
-import { User } from "../models/user";
-import { verifyPassword } from "../utils/auth";
-import { hashPassword } from "../utils/auth";
+import { User } from "./models/user";
+import { verifyPassword } from "../../utils/auth";
+import { hashPassword } from "../../utils/auth";
 import validator from "validator";
-const users: User[]  = [];
+import { LoginUserRequest } from "./request/loginUserDto";
+import { SignUpRequest } from "./request/signUpDto";
+import { UserRepository } from "./repository/userRepository";
+import { UserDatabase } from "../../database/UserDatabase";
+
+
+
 /**
  * This function manages user login in the system.
  *
@@ -12,14 +17,20 @@ const users: User[]  = [];
  * @returns A promise that resolves to a success message if the login is successful.
  * @throws An error if the username or password is not provided, or if the credentials are invalid.
  */
-async function login(username: string, password: string): Promise<string> {
+async function login(request:LoginUserRequest): Promise<string> {
+
+    const {username,password} = request;
+
     try {
-        if (!username || !password) {
+        if (!username || password) {
             throw new Error("Username and password are required parameters.");
         }
-        const user = users.find((user) => {
-            return user.username === username;
-        });
+        // const user = users.find((user) => {
+        //     return user.username === username;
+        // });
+
+       const user = await new UserRepository(new UserDatabase()).getUser(username);
+
         if (!user) throw new Error("Invalid credentials");
         const isCorrectPassword = await verifyPassword(password, user.password);
 
@@ -40,20 +51,20 @@ async function login(username: string, password: string): Promise<string> {
  * @returns A promise that resolves to a success message if the account is created successfully.
  * @throws An error if the username, password, or email is not provided.
  */
-async function signUp(username: string, password: string, email: string, type: UserType = UserType.USER): Promise<string> {
+async function signUp(request:SignUpRequest): Promise<string> {
+    const {username,password,email,type} = request;
     try {
 
         if (!username || !password || !email) {
             throw new Error("Username, password, and email are required parameters.");
         }
         if (!validator.isEmail(email)) throw new Error("Email is not correctly formatted");
-        const user = users.find((user) => {
-            return user.username === username;
-        });
+        const user = await new UserRepository(new UserDatabase()).getUser(username);
         if (user) throw new Error("Username already taken");
         const passwordHash = await hashPassword(password);
-        const newUser = new User(username, passwordHash, email, type);
-        users.push(newUser);
+        const newUser = User.create(username, passwordHash, email, type);
+        await new UserRepository(new UserDatabase()).createUser(newUser);
+
         return "Account created successfully for " + newUser.username;
     } catch (error) {
         throw error;
@@ -63,4 +74,4 @@ async function signUp(username: string, password: string, email: string, type: U
 
 
 
-export {login,signUp,users};
+export {login,signUp};
