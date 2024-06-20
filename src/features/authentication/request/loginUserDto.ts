@@ -10,7 +10,7 @@ class LoginUserRequest implements LoginUserRequestInterface{
         this.password = password;
     }
 
-    static create(username: string, password: string): LoginUserRequest {
+    static get(username: string, password: string): LoginUserRequest {
         return new LoginUserRequest(username, password);
     }
 
