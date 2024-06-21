@@ -6,12 +6,13 @@ import { UserRepository } from "./repository/userRepository";
 import { UserDatabase } from "../../database/UserDatabase";
 import { Bcrypt } from "../cypher/brypct";
 import { EmailRequiredError, InvalidCredentialsError, PasswordRequiredError, UserAlreadyExistsError, UserNameRequiredError } from "./errors/error";
+import {UserServiceInterface} from "../../module/user/application/service/user.service.interface";
 
 class Authentication {
     private userRepository: UserRepository;
     private bcrypt: Bcrypt;
 
-    constructor() {
+    constructor(private readonly userService: UserServiceInterface) {
         this.userRepository = new UserRepository(UserDatabase.getInstance());
         this.bcrypt = Bcrypt.getInstance();
     }
@@ -26,12 +27,15 @@ class Authentication {
     async login(request: LoginUserRequest): Promise<string> {
         const { username, password } = request;
         try {
+            // validation porter au niveau de la request
             if (!username) throw new UserNameRequiredError();
             if(!password) throw new PasswordRequiredError();
-            const user = await this.userRepository.getUser(username);
+            /**const user = await this.userRepository.getUser(username);
             if (!user) throw new InvalidCredentialsError();
             const isCorrectPassword = await this.bcrypt.verifyPassword(password, user.password);
-            if (!isCorrectPassword) throw new InvalidCredentialsError();
+            if (!isCorrectPassword) throw new InvalidCredentialsError();*/
+
+            //return this.userService.makeLogin(username, password);
             return "Account:welcomed_to_your_account";
         } catch (error) {
             throw error;
@@ -48,15 +52,20 @@ class Authentication {
     async signUp(request: SignUpRequest): Promise<string> {
         const { username, password, email, type } = request;
         try {
+            // validation porter au niveau de la request
             if (!username) throw new UserNameRequiredError();
             if(!password) throw new PasswordRequiredError();
             if(!email) throw new EmailRequiredError();
             if (!validator.isEmail(email)) throw new Error("Email:not_correctly_formatted");
+
+            // règles applicatives
             const user = await this.userRepository.getUser(username);
             if (user) throw new UserAlreadyExistsError();
             const passwordHash = await this.bcrypt.hashPassword(password);
             const newUser = User.create(username, passwordHash, email, type);
             await this.userRepository.createUser(newUser);
+
+            // renvoie d'une réponse
             return "Account:created_successfully";
         } catch (error) {
             throw error;

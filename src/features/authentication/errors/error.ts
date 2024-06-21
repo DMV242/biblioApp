@@ -1,4 +1,4 @@
-export class UserNameRequiredError extends Error{
+export class UserNameRequiredError extends Error {
     constructor(){
         super("Username:error_required");
     }

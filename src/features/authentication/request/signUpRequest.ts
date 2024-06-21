@@ -1,4 +1,4 @@
-import { UserType } from "../enum/userType";
+import { UserType } from "../../../module/user/domain/enum/userType";
 import { User } from "../models/user";
 import { SignUpRequestInterface } from "./interfaces/signUpRequest";
 
