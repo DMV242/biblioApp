@@ -10,7 +10,7 @@ import { LoginRequest } from "../../src/modules/security/app/usecase/login/reque
 
 describe('Login backend test', ()=>{
 
-    it('Should be faild', async ()=>{
+    it('Should be faild cause user doesn\'t exist', async ()=>{
         const username = "username";
         const password = "password";
         const userRepository = new InMemoryUserRepository();
@@ -25,6 +25,20 @@ describe('Login backend test', ()=>{
 
 
 
+
+    it('Should be failed cause user password is not correct', async ()=>{
+        const username = "username";
+        const password = "password";
+        const userRepository = new InMemoryUserRepository();
+        const passwordHasher = new PasswordHasherInMemory();
+        const userService = new UserService(userRepository, passwordHasher);
+        const student = new Student("id", username, password, "email@gmail.com");
+        await userRepository.save(student);
+        const request = new LoginRequest(username, "wrongPassword");
+        const loginUsecase = new loginUseCase(userService);
+        expect( async ()=>{return await loginUsecase.execute(request)}).rejects.toThrow("password:incorrect");
+    }
+    )
     it('Should be success', async ()=>{
         const username = "username";
         const password = "password";
