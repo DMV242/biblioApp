@@ -7,7 +7,23 @@ import { LoginRequest } from "../../src/modules/security/app/usecase/login/reque
 
 
 
+
 describe('Login backend test', ()=>{
+
+    it('Should be faild', async ()=>{
+        const username = "username";
+        const password = "password";
+        const userRepository = new InMemoryUserRepository();
+        const passwordHasher = new PasswordHasherInMemory();
+        const userService = new UserService(userRepository, passwordHasher);
+        const request = new LoginRequest(username, password);
+        const loginUsecase = new loginUseCase(userService);
+       expect( async ()=>{return await loginUsecase.execute(request)}).rejects.toThrow("user:not_found");
+
+    }
+    )
+
+
 
     it('Should be success', async ()=>{
         const username = "username";
@@ -22,7 +38,34 @@ describe('Login backend test', ()=>{
         const result = await loginUsecase.execute(request);
         expect(result).toBe("login:success");
     }
-
-
     )
+
+    it('should throw an error when username is missing', () => {
+        const username = '';
+        const password = 'testPassword';
+
+        expect(() => new LoginRequest(username, password)).toThrow('Username:required');
+      });
+
+      it('should throw an error when password is missing', () => {
+        const username = 'testUser';
+        const password = '';
+
+        expect(() => new LoginRequest(username, password)).toThrow('Password:required');
+      });
+
+      it('should throw a BadContentRequestError with correct properties', () => {
+        const username = '';
+        const password = 'testPassword';
+
+        try {
+          new LoginRequest(username, password);
+        } catch (error:any) {
+          expect(error).toBeInstanceOf(Error);
+          expect(error.message).toBe('Username:required');
+          expect(error.errors.status).toBe('BAD_LOGIN_REQUEST_ERROR');
+          expect(error.errors.code).toBe(400);
+        }
+      });
+
 })

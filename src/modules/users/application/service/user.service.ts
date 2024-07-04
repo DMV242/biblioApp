@@ -1,4 +1,4 @@
-import { LoginFailedError } from "../../../security/app/usecase/login/errors/login-failed.error";
+import { LoginFailedError } from "../../../../shared/domain/errors/login-failed.error";
 import { PasswordHasherInterface } from "../../domain/password/password.hasher.interface";
 import { UserRepositoryInterface } from "../../domain/repository/user.repository.interface";
 import { UserServiceInterface } from "./user.service.interface";
