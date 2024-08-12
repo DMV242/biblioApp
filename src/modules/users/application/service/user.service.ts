@@ -1,5 +1,5 @@
 import { LoginFailedError } from "../../../../shared/domain/errors/login-failed.error";
-import { PasswordHasherInterface } from "../../domain/password/password.hasher.interface";
+import { PasswordHasherInterface } from "../../infrastructure/password/password.hasher.interface";
 import { UserRepositoryInterface } from "../../domain/repository/user.repository.interface";
 import { UserServiceInterface } from "./user.service.interface";
 
@@ -8,9 +8,13 @@ export class UserService implements UserServiceInterface{
     private readonly userRepository: UserRepositoryInterface;
     private readonly passwordHasher: PasswordHasherInterface;
 
-    constructor(userRepository: UserRepositoryInterface, passwordHasher: PasswordHasherInterface){
+    private constructor(userRepository: UserRepositoryInterface, passwordHasher: PasswordHasherInterface){
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
+    }
+
+    static create(userRepository: UserRepositoryInterface, passwordHasher: PasswordHasherInterface): UserService {
+        return new UserService(userRepository, passwordHasher);
     }
 
     async makeLogin(username: string, plainPassword: string): Promise<string> {
